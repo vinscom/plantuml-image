@@ -82,7 +82,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
-                    <argLine>-Daws.accessKeyId=AKIAIPVZD5BBKU5OFIXQ -Daws.secretKey=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 -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -Dglue.layers=${settings.localRepository}/in/erail/api-framework/${api.framework.version}/api-framework-${api.framework.version}-common-config.zip,${project.basedir}/config-layers/common,${project.basedir}/config-layers/test</argLine>
+                    <argLine>-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -Dglue.layers=${settings.localRepository}/in/erail/api-framework/${api.framework.version}/api-framework-${api.framework.version}-common-config.zip,${project.basedir}/config-layers/common,${project.basedir}/config-layers/test</argLine>
                 </configuration>
             </plugin>
             <plugin>

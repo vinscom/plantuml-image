@@ -28,14 +28,14 @@ public class PlantUMLServiceTest {
         Server server = Glue.instance().resolve("/in/erail/server/Server");
         AmazonS3 s3 = Glue.instance().resolve("/com/amazonaws/services/s3/AmazonS3");
         PlantUMLService service = Glue.instance().resolve("/in/erail/plantuml/PlantUMLService");
-        String url = "/v1/plantuml/image?u=/sequence-diagrams/001-refresh-coin-market-prices.plantuml";
-        final String nameHash = Hashing.sha256().hashString("/sequence-diagrams/001-refresh-coin-market-prices.plantuml", StandardCharsets.UTF_8).toString();
+        String url = "/v1/plantuml/image?u=/example/test.plantuml";
+        final String nameHash = Hashing.sha256().hashString("/example/test.plantuml", StandardCharsets.UTF_8).toString();
 
         server
                 .getVertx()
                 .createHttpClient()
                 .get(server.getHttpServerOptions().getPort(), server.getHttpServerOptions().getHost(), url)
-                .putHeader(HttpHeaders.REFERER, "https://xch4nge.atlassian.net/test/url")
+                .putHeader(HttpHeaders.REFERER, "https://github.com/vinscom/plantuml-image")
                 .handler(response -> {
                     context.assertEquals(response.statusCode(), HttpResponseStatus.FOUND.code(), response.statusMessage());
                     context.assertNotNull(response.getHeader(HttpHeaders.LOCATION));
@@ -53,14 +53,14 @@ public class PlantUMLServiceTest {
         Server server = Glue.instance().<Server>resolve("/in/erail/server/Server");
         AmazonS3 s3 = Glue.instance().resolve("/com/amazonaws/services/s3/AmazonS3");
         PlantUMLService service = Glue.instance().resolve("/in/erail/plantuml/PlantUMLService");
-        String url = "/v1/plantuml/image?u=/sequence-diagrams/001-refresh-coin-market-prices.plantuml&v=1";
-        final String nameHash = Hashing.sha256().hashString("/sequence-diagrams/001-refresh-coin-market-prices.plantuml:1", StandardCharsets.UTF_8).toString();
+        String url = "/v1/plantuml/image?u=/example/test.plantuml&v=1";
+        final String nameHash = Hashing.sha256().hashString("/example/test.plantuml:1", StandardCharsets.UTF_8).toString();
 
         server
                 .getVertx()
                 .createHttpClient()
                 .get(server.getHttpServerOptions().getPort(), server.getHttpServerOptions().getHost(), url)
-                .putHeader(HttpHeaders.REFERER, "https://xch4nge.atlassian.net/test/url")
+                .putHeader(HttpHeaders.REFERER, "https://github.com/vinscom/plantuml-image")
                 .handler(response -> {
                     context.assertEquals(response.statusCode(), HttpResponseStatus.FOUND.code(), response.statusMessage());
                     context.assertNotNull(response.getHeader(HttpHeaders.LOCATION));

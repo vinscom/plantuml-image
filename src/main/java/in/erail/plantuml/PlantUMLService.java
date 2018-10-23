@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
 import com.google.common.net.HttpHeaders;
 import in.erail.common.FrameworkConstants;
@@ -13,7 +14,9 @@ import in.erail.service.RESTServiceImpl;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.buffer.Buffer;
 import io.vertx.reactivex.core.eventbus.Message;
+import io.vertx.reactivex.ext.web.client.HttpRequest;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +119,7 @@ public class PlantUMLService extends RESTServiceImpl {
         }
 
         final String nameHash = Hashing.sha256().hashString(name, StandardCharsets.UTF_8).toString();
-        
+
         final String fullPath = getBaseURL() + pPath.get();
 
         return getVertx()
@@ -174,11 +177,22 @@ public class PlantUMLService extends RESTServiceImpl {
     }
 
     public Single<String> getUmlTxtFromGithub(String pPath) {
-        return getWebClient()
-                .getAbs(pPath)
-                .putHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getGitHubAccessToken())
+
+        HttpRequest<Buffer> request = getWebClient().getAbs(pPath);
+
+        if (!Strings.isNullOrEmpty(getGitHubAccessToken())) {
+            request.putHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getGitHubAccessToken());
+        }
+
+        return request
                 .rxSend()
-                .map((resp) -> resp.bodyAsString());
+                .map((resp) -> {
+                    if(resp.statusCode() == 200){
+                        return resp.bodyAsString();
+                    }
+                    getLog().error("Not able to process request:" + pPath);
+                    throw new RuntimeException("Not able to process request" + pPath);
+                });
     }
 
     public Single<PutObjectResult> tryUploadToS3(String pBucketName, String pName, File pFile) {
